@@ -42,7 +42,5 @@ module BlogApi
         resource '*', headers: :any, methods: [:get, :post, :put, :patch, :delete, :options]
       end
     end 
-
-    config.middleware.use ApiAuthentication
   end
 end
