@@ -15,6 +15,7 @@ module BlogApi
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.1
 
+    config.autoload_paths << Rails.root.join("app", "middleware")
     config.eager_load_paths << Rails.root.join("app", "middleware")
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
