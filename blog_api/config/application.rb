@@ -10,7 +10,6 @@ if Rails.env.development? || Rails.env.text?
   require 'dotenv/load'
 end
 
-config.eager_load_paths << Rails.root.join("app", "middleware")
 
 require_relative "../lib/middleware/api_authentication"
 
@@ -18,6 +17,8 @@ module BlogApi
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.1
+
+    config.eager_load_paths << Rails.root.join("app", "middleware")
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
@@ -43,7 +44,7 @@ module BlogApi
         resource '*', headers: :any, methods: [:get, :post, :put, :patch, :delete, :options]
       end
     end 
-    
+
     config.middleware.use Middleware::ApiAuthentication
   end
 end
