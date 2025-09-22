@@ -43,7 +43,7 @@ export default function Blog() {
   const headers: HeadersInit = token ? { 'X-API-Token': token }: {};
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts.json`, {
        headers
       })
       .then(res => {
