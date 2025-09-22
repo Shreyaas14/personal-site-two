@@ -10,9 +10,6 @@ if Rails.env.development? || Rails.env.text?
   require 'dotenv/load'
 end
 
-
-require_relative "../lib/middleware/api_authentication"
-
 module BlogApi
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
