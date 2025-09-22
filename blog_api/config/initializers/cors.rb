@@ -1,16 +1,22 @@
-# Be sure to restart your server when you modify this file.
+# Handles CORS preflight and response headers.
+Rails.application.config.middleware.insert_before 0, Rack::Cors do
+  allow do
+    origins \
+      %r{\Ahttps://my-frontend-.*-shreyaas14s-projects\.vercel\.app\z},
+      "http://localhost:3000"
 
-# Avoid CORS issues when API is called from the frontend app.
-# Handle Cross-Origin Resource Sharing (CORS) in order to accept cross-origin Ajax requests.
-
-# Read more: https://github.com/cyu/rack-cors
-
-# Rails.application.config.middleware.insert_before 0, Rack::Cors do
-#   allow do
-#     origins "example.com"
-#
-#     resource "*",
-#       headers: :any,
-#       methods: [:get, :post, :put, :patch, :delete, :options, :head]
-#   end
-# end
+    resource "*",
+      headers: [
+        "Origin",
+        "Content-Type",
+        "Accept",
+        "X-API-Token",
+        "Authorization"
+      ],
+      methods: [:get, :post, :options],
+      expose: [],    # add any response headers you want to expose
+      max_age: 600
+    # If you later use cookies/sessions, add: credentials: true
+    # (and use specific origins, not "*")
+  end
+end
