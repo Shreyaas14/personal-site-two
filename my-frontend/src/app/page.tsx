@@ -4,12 +4,6 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
-interface Post {
-  id: number;
-  title: string;
-  content: string;
-}
-
 const SpinosaurusASCII = () => (
   <div className="text-center">
     <pre className="text-xs text-gray-500 font-mono leading-tight opacity-30">
@@ -59,15 +53,9 @@ const getCurrentTime = () => {
 };
 
 export default function Home() {
-  const [posts, setPosts] = useState<Post[]>([]);
   const [currentTime, setCurrentTime] = useState<string>('');
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts.json`)
-      .then(res => res.json())
-      .then(data => setPosts(data))
-      .catch(err => console.error('Error fetching posts:', err));
-
     const updateTime = () => {
       setCurrentTime(getCurrentTime());
     };

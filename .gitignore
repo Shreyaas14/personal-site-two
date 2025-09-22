@@ -17,3 +17,4 @@ blog_api/tmp/
 blog_api/storage/
 blog_api/.env*
 blog_api/config/master.key
+.vercel

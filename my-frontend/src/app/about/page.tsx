@@ -3,16 +3,6 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
-interface Experience {
-  id: number;
-  company: string;
-  role: string;
-  time: string;
-  description: string;
-  location?: string;
-  companyUrl?: string;
-}
-
 const RaptorASCII = () => (
   <div className="text-center">
     <pre className="text-xs text-gray-500 font-mono leading-tight opacity-30">

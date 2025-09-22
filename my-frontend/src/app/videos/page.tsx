@@ -45,8 +45,7 @@ const SpinosaurusASCII = () => (
                                 ▓▓▓▓▒▒▓▓▓▓▓▓▓▓              ░░▓▓██▓▓▓▓▓▓▓▓▒▒                                            
                               ░░▓▓░░▒▒▒▒▒▒▓▓▒▒░░          ░░░░████▒▒▓▓▓▓▓▓▓▓▓▓                                          
                               ▒▒▓▓░░▒▒▓▓██▓▓░░                ░░▓▓▓▓▓▓▓▓██▓▓▒▒░░                                        
-                              ░░██░░                            ░░░░░░▓▓██░░                                            
-       
+                              ░░██░░                            ░░░░░░▓▓██░░                                                   
 `}
     </pre>
     <motion.p 
@@ -74,11 +73,6 @@ export default function Home() {
   const [currentTime, setCurrentTime] = useState<string>('');
 
   useEffect(() => {
-    fetch('http://localhost:3000/posts.json')
-      .then(res => res.json())
-      .then(data => setPosts(data))
-      .catch(err => console.error('Error fetching posts:', err));
-
     const updateTime = () => {
       setCurrentTime(getCurrentTime());
     };

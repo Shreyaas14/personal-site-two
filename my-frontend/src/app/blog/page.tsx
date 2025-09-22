@@ -4,6 +4,15 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
+interface RawBlogPost {
+  id: number;
+  title: string;
+  created_at: string;
+  body: string;
+  tags?: string[] | null;
+  url?: string | null;
+}
+
 interface BlogPost {
   id: number;
   title: string;
@@ -15,6 +24,7 @@ interface BlogPost {
   url?: string;
   created_at: string;
 }
+
 
 const calculateReadTime = (content: string) => {
   const wordCount = content.split(/\s+/).length;
@@ -30,13 +40,13 @@ export default function Blog() {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts.json`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts.json`) // Updated to match your earlier API port
       .then(res => {
         if (!res.ok) throw new Error('Fetch failed');
         return res.json();
       })
       .then(data => {
-        const mappedPosts = data.map((post: any) => ({
+        const mappedPosts = data.map((post: RawBlogPost) => ({
           id: post.id,
           title: post.title,
           date: new Date(post.created_at).toLocaleDateString('en-US', { 
