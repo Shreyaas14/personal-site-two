@@ -15,7 +15,7 @@ class PostsController < ApplicationController
   rescue ActiveRecord::RecordNotFound
     render json: { error: 'Post not found' }, status: :not_found
   end
-  
+
   def post_params
     params.require(:post).permit(:title, :body, :tags, :url)
   end
@@ -55,4 +55,10 @@ class PostsController < ApplicationController
     def post_params
       params.require(:post).permit(:title, :body)
     end
+
+    def authenticate_api_request!
+      unless request.headers['X-API-Token'] == ENV['API_AUTH_TOKEN']
+        render json: { error: 'Unauthorized' }, status: :unauthorized
+      end
+    end 
 end

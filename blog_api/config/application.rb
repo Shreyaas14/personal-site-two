@@ -6,6 +6,12 @@ require "rails/all"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+if Rails.env.development? || Rails.env.text?
+  require 'dotenv/load'
+end
+
+require_relative "../lib/middleware/api_authentication"
+
 module BlogApi
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
@@ -35,5 +41,6 @@ module BlogApi
         resource '*', headers: :any, methods: [:get, :post, :put, :patch, :delete, :options]
       end
     end 
+    config.middleware.use ApiAuthentication
   end
 end
