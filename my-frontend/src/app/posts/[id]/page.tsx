@@ -48,10 +48,15 @@ const parseContent = (content: string) => {
 export default function PostPage() {
   const { id } = useParams();
   const [post, setPost] = useState<Post | null>(null);
+  const token = process.env.NEXT_PUBLIC_API_TOKEN;
+
+  const headers: HeadersInit = token ? { 'X-API-Token': token }: {};
 
   useEffect(() => {
     if (id) {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts/${id}.json`)
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts/${id}.json`, {
+        headers
+      })
         .then(res => {
           if (!res.ok) throw new Error('Fetch failed');
           return res.json();

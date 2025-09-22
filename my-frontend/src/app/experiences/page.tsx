@@ -56,7 +56,7 @@ const BlackHoleASCII = () => (
       transition={{ duration: 2, delay: 1 }}
       className="text-gray-500 text-sm italic mt-2"
     >
-      Some cool things I've done, scroll down.
+      Some cool things I have done, scroll down.
     </motion.p>
   </div>
 );

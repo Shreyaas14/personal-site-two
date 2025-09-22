@@ -38,9 +38,14 @@ const generateExcerpt = (content: string) => {
 
 export default function Blog() {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const token = process.env.NEXT_PUBLIC_API_TOKEN;
+
+  const headers: HeadersInit = token ? { 'X-API-Token': token }: {};
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts.json`) // Updated to match your earlier API port
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts.json`, {
+       headers
+      })
       .then(res => {
         if (!res.ok) throw new Error('Fetch failed');
         return res.json();
@@ -52,10 +57,10 @@ export default function Blog() {
           date: new Date(post.created_at).toLocaleDateString('en-US', { 
             year: 'numeric', month: 'long', day: 'numeric' 
           }),
-          excerpt: generateExcerpt(post.body || post.content), // Handle either field
-          content: post.body || post.content,
+          excerpt: generateExcerpt(post.body), // Handle either field
+          content: post.body,
           tags: post.tags,
-          readTime: calculateReadTime(post.body || post.content),
+          readTime: calculateReadTime(post.body),
           url: post.url,
           created_at: post.created_at,
         }));
