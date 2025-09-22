@@ -10,6 +10,8 @@ if Rails.env.development? || Rails.env.text?
   require 'dotenv/load'
 end
 
+config.eager_load_paths << Rails.root.join("app", "middleware")
+
 require_relative "../lib/middleware/api_authentication"
 
 module BlogApi
@@ -41,6 +43,7 @@ module BlogApi
         resource '*', headers: :any, methods: [:get, :post, :put, :patch, :delete, :options]
       end
     end 
-    config.middleware.use ApiAuthentication
+    
+    config.middleware.use Middleware::ApiAuthentication
   end
 end
