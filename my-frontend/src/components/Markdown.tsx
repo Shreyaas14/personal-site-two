@@ -13,7 +13,6 @@ import rehypePrism from 'rehype-prism-plus';
 export default function Markdown({ content }: { content: string }) {
   return (
     <ReactMarkdown
-      className="prose prose-invert max-w-none"
       remarkPlugins={[remarkGfm]}
       rehypePlugins={[
         rehypeRaw,                        // turn raw HTML in markdown into HAST
