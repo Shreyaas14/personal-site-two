@@ -1,1 +1,19 @@
-.env.local
+# Ignore node_modules in frontend and backend subdirectories
+my-frontend/node_modules/
+blog_api/node_modules/
+
+# Ignore .env.local in frontend and backend subdirectories
+my-frontend/.env.local
+blog_api/.env.local
+
+# Ignore Next.js build artifacts in frontend
+my-frontend/.next/
+my-frontend/out/
+my-frontend/build/
+
+# Ignore Rails-specific files in backend
+blog_api/log/
+blog_api/tmp/
+blog_api/storage/
+blog_api/.env*
+blog_api/config/master.key
