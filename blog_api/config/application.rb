@@ -43,6 +43,6 @@ module BlogApi
       end
     end 
 
-    config.middleware.use Middleware::ApiAuthentication
+    config.middleware.use ApiAuthentication
   end
 end
