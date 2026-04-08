@@ -6,8 +6,8 @@
 
 
 body {
-  background: #0d0d0d !important;
-  color: #fff;
+  background-color: #c4b8a5;
+  color: #2a2420;
   font-family: var(--font-general-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   min-height: 100vh;
   scroll-behavior: smooth;
@@ -15,60 +15,65 @@ body {
   letter-spacing: -0.01em;
 }
 
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('/concrete.jpg') center/cover fixed no-repeat;
-  opacity: 0.06;
-  z-index: -1;
-  filter: grayscale(100%) contrast(1.2);
-}
+/* Paper texture overlay moved to page component for dark mode support */
+
+
 
 @layer utilities {
   .text-heading {
-    @apply text-5xl text-center;
-    font-family: var(--font-general-sans);
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    font-variation-settings: 'wght' 600;
+    @apply text-5xl text-center text-cream-100 font-serif;
+    font-weight: 400;
+    letter-spacing: 0.01em;
   }
   .text-subheading {
-    @apply text-2xl;
-    font-family: var(--font-general-sans);
+    @apply text-2xl text-cream-100 font-serif;
     font-weight: 500;
-    letter-spacing: -0.01em;
-    font-variation-settings: 'wght' 500;
+    letter-spacing: 0.005em;
   }
   .text-body {
-    @apply text-gray-300 leading-relaxed;
-    font-family: var(--font-general-sans);
+    @apply text-cream-200 leading-relaxed font-sans;
     font-weight: 400;
     letter-spacing: -0.005em;
-    font-variation-settings: 'wght' 400;
   }
-  
+
   .concrete-card {
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(201, 169, 98, 0.03);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(201, 169, 98, 0.1);
     position: relative;
     overflow: hidden;
   }
-  
-  .concrete-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('/concrete.jpg') center/cover;
-    opacity: 0.08;
-    z-index: -1;
-    border-radius: inherit;
-  }
+
+}
+
+/* xAI terminal cursor blink */
+@keyframes terminal-cursor {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.terminal-cursor::after {
+  content: '_';
+  animation: terminal-cursor 1s step-end infinite;
+}
+
+/* Gemini gradient shimmer on headings */
+@keyframes gemini-shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.gemini-shimmer {
+  background: linear-gradient(
+    74deg,
+    #4285F4 0%,
+    #9B72CB 30%,
+    #D96570 60%,
+    #4285F4 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gemini-shimmer 4s linear infinite;
 }

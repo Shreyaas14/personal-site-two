@@ -3,6 +3,9 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
+import { BlogThemeProvider, useBlogTheme } from '@/contexts/BlogThemeContext';
+import BlogThemeWrapper from '@/components/BlogThemeWrapper';
 
 interface RawBlogPost {
   id: number;
@@ -10,7 +13,6 @@ interface RawBlogPost {
   created_at: string;
   body: string;
   tags?: string[] | null;
-  url?: string | null;
 }
 
 interface BlogPost {
@@ -18,121 +20,234 @@ interface BlogPost {
   title: string;
   date: string;
   excerpt: string;
-  content: string;
   tags?: string[];
-  readTime?: string;
-  url?: string;
+  readTime: string;
   created_at: string;
 }
-
 
 const calculateReadTime = (content: string) => {
   const wordCount = content.split(/\s+/).length;
   const minutes = Math.ceil(wordCount / 200);
-  return `${minutes} min read`;
+  return `${minutes} min`;
 };
 
-const generateExcerpt = (content: string) => {
-  return content.slice(0, 150) + (content.length > 150 ? '...' : '');
-};
+const SAMPLE_POSTS: BlogPost[] = [
+  {
+    id: 1,
+    title: 'On the Nature of Understanding',
+    date: 'Jan 15, 2026',
+    excerpt: 'What does it mean for a system to truly understand something? We explore the boundary between pattern matching and comprehension...',
+    tags: ['ai', 'philosophy'],
+    readTime: '8 min',
+    created_at: '2026-01-15T00:00:00Z',
+  },
+  {
+    id: 2,
+    title: 'Scaling Laws and Emergent Behavior',
+    date: 'Dec 3, 2025',
+    excerpt: 'As models grow larger, unexpected capabilities appear. We examine the relationship between scale and qualitative shifts in behavior...',
+    tags: ['research', 'scaling'],
+    readTime: '12 min',
+    created_at: '2025-12-03T00:00:00Z',
+  },
+  {
+    id: 3,
+    title: 'The Craft of Prompt Engineering',
+    date: 'Nov 20, 2025',
+    excerpt: 'Prompt engineering is less science and more craft — a dialogue between human intention and machine interpretation...',
+    tags: ['engineering', 'prompts'],
+    readTime: '5 min',
+    created_at: '2025-11-20T00:00:00Z',
+  },
+];
 
-export default function Blog() {
-  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
-  const token = process.env.NEXT_PUBLIC_API_TOKEN;
-
-  const headers: HeadersInit = token ? { 'X-API-Token': token }: {};
+function BlogContent() {
+  const { labTheme, themeConfig } = useBlogTheme();
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts.json`, {
-       headers
-      })
-      .then(res => {
-        if (!res.ok) throw new Error('Fetch failed');
-        return res.json();
-      })
+    const token = process.env.NEXT_PUBLIC_API_TOKEN;
+    const headers: HeadersInit = token ? { 'X-API-Token': token } : {};
+
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts.json`, { headers })
+      .then(res => res.ok ? res.json() : Promise.reject())
       .then(data => {
-        const mappedPosts = data.map((post: RawBlogPost) => ({
+        setPosts(data.map((post: RawBlogPost) => ({
           id: post.id,
           title: post.title,
-          date: new Date(post.created_at).toLocaleDateString('en-US', { 
-            year: 'numeric', month: 'long', day: 'numeric' 
+          date: new Date(post.created_at).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
           }),
-          excerpt: generateExcerpt(post.body), // Handle either field
-          content: post.body,
-          tags: post.tags,
+          excerpt: post.body.slice(0, 100) + (post.body.length > 100 ? '...' : ''),
+          tags: post.tags || [],
           readTime: calculateReadTime(post.body),
-          url: post.url,
           created_at: post.created_at,
-        }));
-        setBlogPosts(mappedPosts);
+        })));
+        setLoading(false);
       })
-      .catch(err => console.error('Error fetching posts:', err));
+      .catch(() => {
+        setPosts(SAMPLE_POSTS);
+        setLoading(false);
+      });
   }, []);
 
+  // Theme-specific card styles
+  const getCardClass = () => {
+    if (labTheme === 'gemini') return 'rounded-xl';
+    if (labTheme === 'xai') return 'rounded-none border-l-2 border-white pl-4';
+    return '';
+  };
+
   return (
-    <div className="min-h-screen p-8" style={{ background: 'transparent' }}>
-      <motion.h1
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.3 }}
-        className="text-heading mb-8"
-      >
-        Writings
-      </motion.h1>
-      <motion.p
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.5 }}
-        className="text-body text-lg max-w-2xl mx-auto mb-12"
-      >
-        My written thoughts.
-      </motion.p>
-      <ul className="max-w-2xl mx-auto space-y-6">
-        {blogPosts.length === 0 ? (
-          <p className="text-body text-center">No posts yet.</p>
+    <BlogThemeWrapper>
+      <div className={`max-w-2xl mx-auto px-6 ${labTheme === 'anthropic' ? 'py-24' : 'py-20'}`}>
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          className="mb-12"
+        >
+          <h1
+            className={`text-4xl mb-2 ${themeConfig.headingFont} ${labTheme === 'gemini' ? 'gemini-shimmer' : ''}`}
+            style={labTheme === 'gemini' ? undefined : { color: themeConfig.textPrimary }}
+          >
+            {themeConfig.pageTitle}
+          </h1>
+          {/* Divider */}
+          {labTheme === 'gemini' ? (
+            <div
+              className="w-16 h-[2px] rounded-full"
+              style={{ background: themeConfig.dividerColor }}
+            />
+          ) : (
+            <div
+              className="w-12 h-0.5"
+              style={{ backgroundColor: themeConfig.dividerColor }}
+            />
+          )}
+        </motion.div>
+
+        {/* Cactus */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="flex justify-center mb-12"
+        >
+          <Image
+            src={themeConfig.cactusImage}
+            alt="Cactus"
+            width={180}
+            height={180}
+            className="object-contain"
+            style={{
+              maxHeight: '180px',
+              filter: labTheme === 'openai'
+                ? 'drop-shadow(0 0 30px rgba(16, 163, 127, 0.35))'
+                : labTheme === 'gemini'
+                ? 'drop-shadow(0 0 30px rgba(155, 114, 203, 0.4)) drop-shadow(0 0 60px rgba(66, 133, 244, 0.2))'
+                : labTheme === 'xai'
+                ? 'drop-shadow(0 0 20px rgba(255, 255, 255, 0.2))'
+                : undefined,
+            }}
+          />
+        </motion.div>
+
+        {/* Posts */}
+        {loading ? (
+          <p className={labTheme === 'xai' ? 'terminal-cursor' : ''} style={{ color: themeConfig.textMuted }}>
+            {labTheme === 'xai' ? 'Loading' : 'Loading...'}
+          </p>
+        ) : posts.length === 0 ? (
+          <p style={{ color: themeConfig.textMuted }}>No posts yet.</p>
         ) : (
-          blogPosts.map((post) => (
-            <motion.li
-              key={post.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 * (blogPosts.indexOf(post) + 1) }}
-              className="border-b border-gray-700 pb-4"
-            >
-              <Link href={`/posts/${post.id}`} className="block text-white hover:text-gray-300 transition-colors text-lg font-semibold py-2 hover:border-gray-500">
-                {post.title}
-              </Link>
-              <div className="text-sm text-gray-400 flex flex-col md:flex-row md:items-center gap-2 mt-1">
-                <span>{post.date}</span>
-                {post.readTime && <span>• {post.readTime}</span>}
-              </div>
-              {post.tags && (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {post.tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="px-2 py-1 text-xs text-gray-400 border border-gray-600 rounded-full"
+          <div className="space-y-8">
+            {posts.map((post, index) => (
+              <motion.div
+                key={post.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <Link href={`/posts/${post.id}`} className="block group">
+                  <div
+                    className={`p-4 -mx-4 transition-colors duration-200 ${getCardClass()}`}
+                    style={{
+                      border: labTheme === 'xai' ? undefined : themeConfig.cardBorder,
+                    }}
+                  >
+                    <div className="flex justify-between items-baseline mb-1">
+                      <h2
+                        className={`text-lg group-hover:opacity-70 transition-opacity ${themeConfig.headingFont}`}
+                        style={{ color: themeConfig.textPrimary }}
+                      >
+                        {post.title}
+                      </h2>
+                      <span
+                        className="text-xs flex-shrink-0 ml-4"
+                        style={{ color: themeConfig.textMuted }}
+                      >
+                        {post.date}
+                      </span>
+                    </div>
+                    <p
+                      className={`text-sm ${themeConfig.bodyFont}`}
+                      style={{ color: themeConfig.textSecondary }}
                     >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              )}
-              <p className="text-body mt-2">{post.excerpt}</p>
-            </motion.li>
-          ))
+                      {post.excerpt}
+                    </p>
+                    {/* OpenAI green pill tags */}
+                    {labTheme === 'openai' && post.tags && post.tags.length > 0 && (
+                      <div className="flex gap-2 mt-2">
+                        {post.tags.map(tag => (
+                          <span
+                            key={tag}
+                            className="text-xs px-2 py-0.5 rounded-full"
+                            style={{
+                              backgroundColor: 'rgba(16, 163, 127, 0.12)',
+                              color: '#10A37F',
+                            }}
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
         )}
-      </ul>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.7 }}
-        className="mt-12 text-center"
-      >
-        <Link href="/" className="text-body text-lg hover:text-white transition-colors">
-          ← Back to Home
-        </Link>
-      </motion.div>
-    </div>
+
+        {/* Back */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+          className="mt-16"
+        >
+          <Link
+            href="/"
+            className={`text-sm hover:opacity-70 transition-opacity ${labTheme === 'xai' ? 'uppercase tracking-wider' : ''}`}
+            style={{ color: themeConfig.textMuted }}
+          >
+            ← back
+          </Link>
+        </motion.div>
+      </div>
+    </BlogThemeWrapper>
+  );
+}
+
+export default function Blog() {
+  return (
+    <BlogThemeProvider>
+      <BlogContent />
+    </BlogThemeProvider>
   );
 }
