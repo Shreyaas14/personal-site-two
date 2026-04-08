@@ -23,7 +23,7 @@ export default function TypewriterAscii({
   const [displayArt, setDisplayArt] = useState('');
   const [isComplete, setIsComplete] = useState(false);
   const indexRef = useRef(0);
-  const frameRef = useRef<number>();
+  const frameRef = useRef<number>(0);
   const startTimeRef = useRef<number | null>(null);
 
   useEffect(() => {

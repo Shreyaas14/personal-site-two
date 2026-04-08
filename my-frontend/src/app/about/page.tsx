@@ -44,8 +44,8 @@ export default function About() {
             style={{
               color: PURPLE,
               backgroundColor: BG,
-              ringColor: PURPLE_60,
-            }}
+              ['--tw-ring-color' as string]: PURPLE_60,
+            } as React.CSSProperties}
           >
             ← back
           </Link>

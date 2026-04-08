@@ -20,7 +20,7 @@ export default function WavingAscii({
 }: WavingAsciiProps) {
   const [displayArt, setDisplayArt] = useState(art);
   const timeRef = useRef(0);
-  const frameRef = useRef<number>();
+  const frameRef = useRef<number>(0);
 
   useEffect(() => {
     const lines = art.split('\n');

@@ -18,7 +18,7 @@ export default function RotatingAsciiSphere({
 }: RotatingAsciiSphereProps) {
   const [frame, setFrame] = useState<string>('');
   const angleRef = useRef({ A: 0, B: 0 });
-  const frameRef = useRef<number>();
+  const frameRef = useRef<number>(0);
 
   useEffect(() => {
     const renderFrame = () => {
